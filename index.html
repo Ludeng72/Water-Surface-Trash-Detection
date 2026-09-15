@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>水面垃圾检测系统</title>
+    <style>
+        body { font-family: 'Microsoft YaHei', sans-serif; text-align: center; background-color: #f4f7f6; padding: 50px; }
+        h1 { color: #2c3e50; }
+        .upload-box { border: 2px dashed #3498db; border-radius: 10px; padding: 40px; background-color: #fff; cursor: pointer; margin-bottom: 20px; transition: 0.3s; }
+        .upload-box:hover { background-color: #eaf4fc; }
+        #result { max-width: 800px; margin: 0 auto; display: none; }
+        #result img { width: 100%; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .loading { display: none; color: #3498db; font-weight: bold; margin-top: 20px; }
+        #result-title { color: #27ae60; font-weight: bold; margin-bottom: 15px; font-size: 20px; }
+    </style>
+</head>
+<body>
+    <h1>🌊 水面垃圾检测系统</h1>
+    <p>基于 YOLOv8 + FastAPI 的智能检测服务</p>
+
+    <div class="upload-box" onclick="document.getElementById('fileInput').click()">
+        <p>点击这里上传图片，或者拖拽图片到这里</p>
+        <input type="file" id="fileInput" accept="image/*" style="display: none;" onchange="uploadImage()">
+    </div>
+
+    <div class="loading" id="loading">AI 正在检测中，请稍候...</div>
+
+    <div id="result">
+        <div id="result-title">检测结果：</div>
+        <img id="resultImage" src="" alt="检测结果">
+    </div>
+
+    <script>
+        async function uploadImage() {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+            if (!file) return;
+
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('result').style.display = 'none';
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                const response = await fetch('http://127.0.0.1:8000/predict/', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+
+                document.getElementById('resultImage').src = data.result_image;
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('result').style.display = 'block';
+            } catch (error) {
+                alert('检测失败，请确保后端服务已启动！');
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>

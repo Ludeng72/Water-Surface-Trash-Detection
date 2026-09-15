@@ -1,0 +1,7 @@
+path: E:/study2/project/river_bfd/SEDS-YOLOv8-1.0.0/dataset
+train: images
+val: images
+test: images
+
+nc: 9
+names: ['can', 'leaf', 'branch', 'grass', 'bottle', 'plastic-box', 'milk-box', 'plastic-bag', 'paper']
